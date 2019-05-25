@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <title>Tasks</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="resources/css/index.css">
+        <link rel="stylesheet" href="resources/css/forms-min.css">
+    </head>
+    <body>
+        <h2>Tasks</h2>
+        <div data-bind="template: templateName"></div>
+
+        <!-- UI of the main window -->
+        <script type="text/html" id="tasks">
+            <div class="rTable">
+                <div class="rTableRow">
+                    <div class="rTableCell">
+                        <button data-bind="click: addNew">
+                            <img src="resources/icons/add_obj.gif" 
+                                 alt="Add Task..." title="Add Task..."/>
+                        </button>
+                        <input id="tglShowCompleted" class="showCompletedCheckbox" 
+                               type="checkbox" data-bind="checked: showCompleted"/>
+                        <label for="tglShowCompleted"></label>
+                        </input>
+                        <input id="tglSortByPriority" class="sortByCheckbox"
+                               type="checkbox" data-bind="checked: sortByPriority">
+                        <label for="tglSortByPriority"></label>
+                        </input>
+                        <button data-bind="click: showAlerts">
+                            <img src="resources/icons/warning.gif" 
+                                 alt="Show Alerts..." title="Show Alerts..."/>
+                        </button>
+                    </div>   
+                </div>
+            </div>        
+            <div class="rTable"> 
+                <div class="rTableHeading"> 
+                    <div class="rTableHead">
+                        <strong>Priority</strong>
+                    </div> 
+                    <div class="rTableHead">
+                        <span style="font-weight: bold;">Description</span>
+                    </div> 
+                    <div class="rTableHead">
+                        <strong>Alert?</strong>
+                    </div>
+                    <div class="rTableHead">
+                        <strong>Due Date</strong>
+                    </div>
+                </div>    
+                <!-- ko foreach: sortedAndFilteredTasks -->
+                <div class="rTableRow">
+                    <div class="rTableCell" data-bind="text: priority, 
+                         style: { 'background-color': completed() ? 'green' : 'white' }"></div> 
+                    <div class="rTableCell" data-bind="text: description, 
+                         style: { 'background-color': completed() ? 'green' : 'white' }"></div> 
+                    <div class="rTableCell" data-bind="text: alert, 
+                         style: { 'background-color': completed() ? 'green' : 'white' }"></div> 
+                    <div class="rTableCell" data-bind="text: dueDate, 
+                         style: { 'background-color': completed() ? 'green' : 'white' }"></div> 
+                    <div class="rTableCell" >
+                        <button data-bind="click: $root.edit">
+                            <img src="resources/icons/configs.gif" 
+                                 alt="Edit Task..." title="Edit Task..."/>
+                        </button>
+                        <button data-bind="click: $parent.removeTask">
+                            <img src="resources/icons/delete_edit.gif" 
+                                 alt="Remove Task..." title="Remove Task..."/>
+                        </button>
+                        <input id="tglMarkAsCompleted" type="checkbox" data-bind="checked: completed"
+                               name ="tglMarkAsCompleted" title="Mark As Completed..."/>
+                    </div>
+                </div>
+                <!-- /ko -->
+            </div>
+            <div class="footer">There are 
+                <label data-bind="text: $data.numberOfTasksWithAlert"/></label> 
+            task(s) with alerts today.
+        </div>
+    </script>
+
+    <!-- UI of the show alerts dialog -->
+    <script type="text/html" id="alerts">
+        <div><label data-bind="html: text"></label></div>
+        <button id='OK' type="submit" hidden>OK</button>
+    </script>    
+
+    <!-- UI of the dialog -->
+    <script type="text/html" id="editor">
+        <hr/>
+        <form id="edit-form" class="pure-form pure-form-aligned">
+            <!-- ko with: task -->
+            <fieldset>
+                 <div class="pure-control-group">
+                    <label for="description">Description:</label>
+                    <input id="description" type="text" placeholder="Description" class="pure-input-1-2"
+                           data-bind="textInput: description()" required></input>
+                <div>
+                <div class="pure-control-group">
+                <label for="priority">Priority:</label>
+                    <input id="priority" type="number" placeholder="Priority" class="pure-input-1-2"
+                           min="1" max="10" data-bind="textInput: priority()" required></input>
+                </div>
+                <div class="pure-control-group">
+                    <label for="dueDate">Due Date:</label>
+                    <input id="dueDate" type="text" placeholder="Due Date" class="pure-input-1-2"
+                           data-bind="textInput: dueDate()" required>
+                </div>
+                <div class="pure-control-group">
+                    <label for="alert" class="pure-checkbox">
+                        <input id="alert" type="checkbox" data-bind="checked: alert()"></input>
+                    Show alert:</label>
+                    <input type="number" min="0" max="365" class="pure-input-1-3"
+                           data-bind="textInput: daysBefore()"></input>
+                    <!--<label for="daysBefore"> days before</label>-->
+                    <span class="pure-form-message-inline">days before</span>
+                </div>
+                <hr/>
+                <div class="pure-control-group">
+                    <label for="obs">Obs: </label>                  
+                    <textarea id="obs" rows="4" cols="150" placeholder="Obs" class="pure-input-1-2"
+                              data-bind="textInput: obs()"></textarea>
+                </div>
+                <hr>
+                <div class="pure-control-group">
+                    <label for="completed" class="pure-checkbox">
+                        <input id="completed" type="checkbox" data-bind="checked: completed()"></input>
+                    Completed Task</label>
+                </div>
+            </fieldset>
+            <!-- /ko -->
+        </form>
+        <button id='OK' type="submit" hidden data-bind="click: $root.commit">Save</button>
+        <button id='CLEAR' hidden type="reset">Clear</button>
+        <button type="submit" hidden data-bind="click: $root.cancel">Cancel</button>
+    </script>
+</body>
+</html>
